@@ -32,6 +32,11 @@ def test_cautious_no_refund_guarantee_is_not_an_unsafe_promise():
     assert gate.passed
 
 
+def test_no_one_can_guarantee_refund_is_not_an_unsafe_promise():
+    gate = AegisFraudTriageAgent._output_gate("No one can guarantee a refund, recovery, or cancellation. [kb.v1.no_guarantee.001]", Route.SCAM_INFORMATION)
+    assert gate.passed
+
+
 def test_urgent_human_review_phrase_satisfies_output_safety_gate():
     gate = AegisFraudTriageAgent._output_gate("This is urgent fraud and requires immediate human review. [kb.v1.urgent_review.001]", Route.URGENT_FRAUD)
     assert gate.passed

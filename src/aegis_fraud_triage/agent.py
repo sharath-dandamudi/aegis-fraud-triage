@@ -150,7 +150,15 @@ class AegisFraudTriageAgent:
         if re.search(r"should i get a loan", text):
             return Decision(Route.OUT_OF_SCOPE, RiskTier.LOW, False, "Out-of-scope regulated advice", 0.95)
         urgent = bool(re.search(r"in progress|right now|just sent|few minutes ago|still on|still see.*screen|sharing my screen|pressured to transfer|another payment", text)) or bool(re.search(r"(?:gave|shared|entered|told).{0,35}(?:otp|one[- ]?time code|verification code|\bcode\b)", text))
-        payment = bool(re.search(r"payid|pay id|transfer|sent \$?\d|sent money|bank transfer|seller|marketplace|invoice|bank details|bond|deposit|online listing|\bpaid\b|charity|delivery fee|crypto", text))
+        # A refund-fee request is a payment-scam signal even if the customer
+        # has not yet sent money and does not use a payment-product keyword.
+        # Keep this narrow so ordinary refund questions stay bounded guidance.
+        refund_fee = bool(re.search(
+            r"(?:owed|promised|claim(?:ed|ing)?|said).{0,60}(?:refund|reimbursement).{0,90}(?:pay|fee|upfront)"
+            r"|(?:refund|reimbursement).{0,90}(?:pay (?:a )?fee|fee upfront|upfront fee)",
+            text,
+        ))
+        payment = bool(re.search(r"payid|pay id|transfer|sent \$?\d|sent money|bank transfer|seller|marketplace|invoice|bank details|bond|deposit|online listing|\bpaid\b|charity|delivery fee|crypto", text)) or refund_fee
         credential = bool(re.search(r"password|login|remote access|anydesk|teamviewer|otp|verification code|\bcode\b|screen share|sharing my screen|screen-sharing|virus|tech support|install|fake parcel|public computer|contraseña", text))
         card = bool(re.search(r"card|unfamiliar transaction|charged|merchant", text))
         # High-recall safety override. It is intentionally conservative: false
@@ -256,7 +264,7 @@ class AegisFraudTriageAgent:
         text = response.lower(); reasons = []
         # Only flag affirmative outcome promises. Cautious wording such as
         # "cannot guarantee a refund" is mandatory customer-safety guidance.
-        if re.search(r"(?<!cannot )(?<!can't )(?<!cannot\s)(?:guarantee|promise|ensure)\s+(?:a\s+)?(?:refund|recovery|cancellation)", text) or any(term in text for term in ("will recover your money", "payment will be stopped")):
+        if re.search(r"(?<!cannot )(?<!can't )(?<!no one can )(?<!not able to )(?:guarantee|promise|ensure)\s+(?:a\s+)?(?:refund|recovery|cancellation)", text) or any(term in text for term in ("will recover your money", "payment will be stopped")):
             reasons.append("Unsafe outcome promise")
         # Match an actual request, not the required safety language "never
         # provide passwords" or "do not provide full card details".

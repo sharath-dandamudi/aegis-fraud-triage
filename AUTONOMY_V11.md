@@ -30,7 +30,7 @@ The regression suite now has 23 tests, including a 20-case urgent-risk pack with
 
 A two-case live Pinecone-plus-Nebius smoke over retained urgent-failure cases passed route, escalation, retrieval/citation, tool, gate, review and case-package contracts. Its p95 latency was `12.90s` and estimated cost was `A$0.004` per run.
 
-The subsequent full 100-case live run confirmed the safety outcome: critical-escalation recall, guardrail compliance, structured-contract compliance and review-case-package completeness were all `1.000`. It also surfaced the operational trade-off: escalation precision `0.731` (seven extra reviews), route macro-F1 `0.935`, evidence coverage `0.960`, citation recall `0.887`, tool-contract accuracy `0.920`, p95 `12.55s`, and estimated average cost `A$0.0035`. The one non-safety route regression was `BSTA-R-044`, a refund-fee report routed as general safety. Retain it as the next targeted routing regression.
+The subsequent full 100-case live run confirmed the safety outcome: critical-escalation recall, guardrail compliance, structured-contract compliance and review-case-package completeness were all `1.000`. It also surfaced the operational trade-off: escalation precision `0.731` (seven extra reviews), route macro-F1 `0.935`, evidence coverage `0.960`, citation recall `0.887`, tool-contract accuracy `0.920`, p95 `12.55s`, and estimated average cost `A$0.0035`. The one non-safety route regression was `BSTA-R-044`, a refund-fee report routed as general safety. It is now fixed: the targeted live rerun passed every route, evidence, tool, gate, review, response-contract and case-package check.
 
 ## Operating model
 
