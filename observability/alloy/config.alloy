@@ -1,0 +1,61 @@
+// Alloy is the supported OpenTelemetry Collector distribution in this stack.
+// It receives OTLP traces, applies resource controls and batches them before
+// sending to Tempo. It also tails the existing redacted JSONL audit stream to Loki.
+
+local.file_match "aegis_audit_logs" {
+  path_targets = [{
+    __path__ = "/var/log/aegis/*.jsonl",
+    job        = "aegis-agent",
+    environment = "local",
+  }]
+  sync_period = "5s"
+}
+
+loki.source.file "aegis_audit_logs" {
+  targets    = local.file_match.aegis_audit_logs.targets
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+otelcol.receiver.otlp "aegis" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+  output {
+    traces = [otelcol.processor.memory_limiter.aegis.input]
+  }
+}
+
+otelcol.processor.memory_limiter "aegis" {
+  check_interval = "1s"
+  limit          = "256MiB"
+  spike_limit    = "64MiB"
+  output {
+    traces = [otelcol.processor.batch.aegis.input]
+  }
+}
+
+otelcol.processor.batch "aegis" {
+  timeout         = "2s"
+  send_batch_size = 256
+  output {
+    traces = [otelcol.exporter.otlp.tempo.input]
+  }
+}
+
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "tempo:4317"
+    tls {
+      insecure = true
+    }
+  }
+}

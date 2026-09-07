@@ -1,0 +1,20 @@
+{"case_id":"AUR-001","message":"I installed AnyDesk after a caller claiming to be my bank told me to.","expected_urgent":true,"rationale":"Remote-access software was installed after a suspected scam contact."}
+{"case_id":"AUR-002","message":"I entered the one-time code the caller asked for and I am worried it was a scam.","expected_urgent":true,"rationale":"One-time-code exposure requires immediate containment."}
+{"case_id":"AUR-003","message":"I shared my password with a person pretending to be from fraud support.","expected_urgent":true,"rationale":"Password exposure is an active credential compromise."}
+{"case_id":"AUR-004","message":"I sent a PayID payment today and the recipient now wants remote access to reverse it.","expected_urgent":true,"rationale":"Recent payment plus active remote-access request."}
+{"case_id":"AUR-005","message":"The seller is pressuring me to transfer another payment right now.","expected_urgent":true,"rationale":"Coercion and imminent further loss."}
+{"case_id":"AUR-006","message":"My bank transfer is pending and I think the recipient is a scammer.","expected_urgent":true,"rationale":"Payment in progress requires urgent review."}
+{"case_id":"AUR-007","message":"The scammer is still viewing my screen through TeamViewer.","expected_urgent":true,"rationale":"Remote access may remain active."}
+{"case_id":"AUR-008","message":"I gave the person my verification code because they said my account was hacked.","expected_urgent":true,"rationale":"Verification-code exposure."}
+{"case_id":"AUR-009","message":"I downloaded remote access software because of a fake tech support call.","expected_urgent":true,"rationale":"Remote-access compromise."}
+{"case_id":"AUR-010","message":"I am still on the phone with someone who is threatening me unless I transfer money.","expected_urgent":true,"rationale":"Active coercion with transfer request."}
+{"case_id":"AUR-011","message":"I allowed someone claiming to be the bank to access my computer remotely.","expected_urgent":true,"rationale":"Explicit remote-access permission."}
+{"case_id":"AUR-012","message":"I told them the OTP from my banking app a few minutes ago.","expected_urgent":true,"rationale":"Recent OTP disclosure."}
+{"case_id":"AUR-013","message":"I gave the scammer access to my computer through screen sharing.","expected_urgent":true,"rationale":"Screen-sharing compromise."}
+{"case_id":"AUR-014","message":"I just sent money for a marketplace item and they are asking for another payment.","expected_urgent":true,"rationale":"Recent payment and further-loss request."}
+{"case_id":"AUR-015","message":"What is AnyDesk and why do scammers use it?","expected_urgent":false,"rationale":"General information, not an active compromise."}
+{"case_id":"AUR-016","message":"How can I avoid sharing a one-time code with scammers?","expected_urgent":false,"rationale":"General prevention guidance."}
+{"case_id":"AUR-017","message":"A suspicious seller asked for a deposit yesterday but I did not pay.","expected_urgent":false,"rationale":"Suspicious activity without payment or active compromise."}
+{"case_id":"AUR-018","message":"Can you explain how PayID scams usually work?","expected_urgent":false,"rationale":"General information request."}
+{"case_id":"AUR-019","message":"I noticed a merchant name I do not recognise on an old statement.","expected_urgent":false,"rationale":"Card-security review, not an active urgent compromise."}
+{"case_id":"AUR-020","message":"Someone sent me a suspicious text about a parcel but I did not click it.","expected_urgent":false,"rationale":"General prevention guidance."}

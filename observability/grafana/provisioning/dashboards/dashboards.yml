@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: Aegis Operations
+    orgId: 1
+    folder: Aegis
+    type: file
+    disableDeletion: true
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

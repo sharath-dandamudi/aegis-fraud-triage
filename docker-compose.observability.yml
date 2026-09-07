@@ -1,0 +1,72 @@
+services:
+  prometheus:
+    image: prom/prometheus:v3.2.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=14d
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observability/alert-rules.yml:/etc/prometheus/alert-rules.yml:ro
+      - prometheus-data:/prometheus
+
+  grafana:
+    image: grafana/grafana:11.5.2
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:?Set GRAFANA_ADMIN_USER in .env}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD in .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/provisioning/dashboards/aegis-operations.json
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+      - loki
+      - tempo
+
+  tempo:
+    image: grafana/tempo:2.7.1
+    command: ["-config.file=/etc/tempo.yml"]
+    ports:
+      - "3200:3200"
+    volumes:
+      - ./observability/tempo/tempo.yml:/etc/tempo.yml:ro
+      - tempo-data:/var/tempo
+
+  loki:
+    image: grafana/loki:3.3.2
+    command: ["-config.file=/etc/loki/local-config.yml"]
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./observability/loki/loki.yml:/etc/loki/local-config.yml:ro
+      - loki-data:/loki
+
+  alloy:
+    image: grafana/alloy:v1.19.2
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --server.http.listen-addr=0.0.0.0:12345
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "12345:12345"
+    volumes:
+      - ./observability/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - ./logs:/var/log/aegis:ro
+      - alloy-data:/var/lib/alloy/data
+    depends_on:
+      - loki
+      - tempo
+
+volumes:
+  grafana-data:
+  prometheus-data:
+  tempo-data:
+  loki-data:
+  alloy-data:

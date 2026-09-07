@@ -1,0 +1,39 @@
+groups:
+  - name: aegis-safety-and-service-slos
+    rules:
+      - alert: AegisGateFailureRateHigh
+        expr: aegis_window_gate_failure_rate > 0.05
+        for: 2m
+        labels:
+          severity: high
+          service: aegis-fraud-triage
+        annotations:
+          summary: Aegis gate-failure rate is above the 5% release threshold.
+          runbook: Pause automatic release, inspect a trace in Grafana/Tempo, then validate the affected gate and retrieval evidence.
+      - alert: AegisAbstentionRateElevated
+        expr: aegis_window_abstention_rate > 0.10
+        for: 5m
+        labels:
+          severity: medium
+          service: aegis-fraud-triage
+        annotations:
+          summary: Aegis safe-abstention rate is above the 10% monitoring threshold.
+          runbook: Check corpus freshness, Pinecone retrieval quality and route distribution before changing thresholds.
+      - alert: AegisLatencySLOBreached
+        expr: aegis_latency_ms{quantile="0.95"} > 3000
+        for: 5m
+        labels:
+          severity: medium
+          service: aegis-fraud-triage
+        annotations:
+          summary: Aegis P95 latency is above 3 seconds.
+          runbook: Check Nebius, Pinecone and tool spans in Tempo; do not disable safety gates to improve latency.
+      - alert: AegisCostSLOBreached
+        expr: aegis_average_cost_aud > 0.10
+        for: 10m
+        labels:
+          severity: medium
+          service: aegis-fraud-triage
+        annotations:
+          summary: Aegis average estimated cost is above A$0.10 per run.
+          runbook: Review model selection, retries and tool-call policy; preserve required evidence and HITL gates.

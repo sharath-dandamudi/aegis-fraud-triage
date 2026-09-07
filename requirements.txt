@@ -1,0 +1,11 @@
+pytest>=8,<9
+opentelemetry-api>=1.27,<2
+opentelemetry-sdk>=1.27,<2
+opentelemetry-exporter-otlp-proto-http>=1.27,<2
+opentelemetry-exporter-otlp-proto-http>=1.27,<2
+langsmith>=0.1.100,<1
+ragas==0.3.9
+langchain-community>=0.3,<0.4
+langchain-openai>=0.3,<1
+streamlit>=1.39,<2
+python-dotenv>=1.0,<2

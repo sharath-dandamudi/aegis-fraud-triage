@@ -1,0 +1,140 @@
+{
+  "id": null,
+  "uid": "aegis-operations-v1",
+  "title": "Aegis Fraud Triage | Operations Command Centre",
+  "tags": ["aegis", "fraud", "agent", "safety"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": {"from": "now-6h", "to": "now"},
+  "annotations": {"list": []},
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "🛡️ Aegis safety posture",
+      "gridPos": {"x": 0, "y": 0, "w": 24, "h": 3},
+      "options": {"mode": "markdown", "content": "## Operations Command Centre\n**Purpose:** evidence-first scam triage with controlled tool access and human release.  \\n**Red line:** any critical alert means stop automatic release and investigate the linked trace.  \\n**Drill-down:** Grafana for operational signals → Tempo for trajectory → LangSmith for prompt/model and offline-eval evidence."}
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Interactive traces",
+      "gridPos": {"x": 0, "y": 3, "w": 4, "h": 5},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "aegis_runtime_traces"}],
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}, "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": null}]}, "mappings": []}, "overrides": []},
+      "options": {"reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""}, "orientation": "auto", "textMode": "value_and_name", "colorMode": "background", "graphMode": "area", "justifyMode": "auto"}
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Human escalation rate",
+      "gridPos": {"x": 4, "y": 3, "w": 4, "h": 5},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "aegis_escalation_rate"}],
+      "fieldConfig": {"defaults": {"unit": "percentunit", "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 0.5}, {"color": "red", "value": 0.8}]}, "mappings": []}, "overrides": []},
+      "options": {"reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""}, "orientation": "auto", "textMode": "value_and_name", "colorMode": "background", "graphMode": "area", "justifyMode": "auto"}
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "P95 latency",
+      "gridPos": {"x": 8, "y": 3, "w": 4, "h": 5},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "aegis_latency_ms{quantile=\"0.95\"}"}],
+      "fieldConfig": {"defaults": {"unit": "ms", "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 1500}, {"color": "red", "value": 3000}]}, "mappings": []}, "overrides": []},
+      "options": {"reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""}, "orientation": "auto", "textMode": "value_and_name", "colorMode": "background", "graphMode": "area", "justifyMode": "auto"}
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Pending human review",
+      "gridPos": {"x": 12, "y": 3, "w": 4, "h": 5},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "aegis_review_queue_pending"}],
+      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 1}, {"color": "red", "value": 10}]}, "mappings": []}, "overrides": []},
+      "options": {"reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""}, "orientation": "auto", "textMode": "value_and_name", "colorMode": "background", "graphMode": "area", "justifyMode": "auto"}
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "Critical + high alerts",
+      "gridPos": {"x": 16, "y": 3, "w": 4, "h": 5},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "sum(aegis_alerts{severity=~\"critical|high\"})"}],
+      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}, "mappings": []}, "overrides": []},
+      "options": {"reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""}, "orientation": "auto", "textMode": "value_and_name", "colorMode": "background", "graphMode": "area", "justifyMode": "auto"}
+    },
+    {
+      "id": 7,
+      "type": "stat",
+      "title": "Average cost / run",
+      "gridPos": {"x": 20, "y": 3, "w": 4, "h": 5},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "aegis_average_cost_aud"}],
+      "fieldConfig": {"defaults": {"unit": "currencyAUD", "decimals": 4, "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 0.05}, {"color": "red", "value": 0.10}]}, "mappings": []}, "overrides": []},
+      "options": {"reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""}, "orientation": "auto", "textMode": "value_and_name", "colorMode": "background", "graphMode": "area", "justifyMode": "auto"}
+    },
+    {
+      "id": 8,
+      "type": "bargauge",
+      "title": "Scenario routing distribution",
+      "gridPos": {"x": 0, "y": 8, "w": 12, "h": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "aegis_route_traces", "legendFormat": "{{route}}"}],
+      "fieldConfig": {"defaults": {"color": {"mode": "continuous-GrYlRd"}, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}, "mappings": []}, "overrides": []},
+      "options": {"orientation": "horizontal", "displayMode": "gradient", "showUnfilled": true, "reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""}}
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Safety alerts by severity",
+      "gridPos": {"x": 12, "y": 8, "w": 12, "h": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "aegis_alerts", "legendFormat": "{{severity}}"}],
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}, "custom": {"drawStyle": "line", "lineInterpolation": "stepAfter", "lineWidth": 2, "fillOpacity": 18, "showPoints": "never", "spanNulls": true}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}}
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "Latency SLO trend",
+      "gridPos": {"x": 0, "y": 16, "w": 12, "h": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "aegis_latency_ms", "legendFormat": "p{{quantile}}"}],
+      "fieldConfig": {"defaults": {"unit": "ms", "color": {"mode": "palette-classic"}, "custom": {"drawStyle": "line", "lineInterpolation": "smooth", "lineWidth": 2, "fillOpacity": 12, "showPoints": "never", "spanNulls": true}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 1500}, {"color": "red", "value": 3000}]}}, "overrides": []},
+      "options": {"legend": {"displayMode": "table", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi", "sort": "desc"}}
+    },
+    {
+      "id": 11,
+      "type": "gauge",
+      "title": "Gate failure rate",
+      "gridPos": {"x": 12, "y": 16, "w": 6, "h": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "sum(aegis_gate_outcomes{outcome=\"fail\"}) / clamp_min(sum(aegis_gate_outcomes), 1)"}],
+      "fieldConfig": {"defaults": {"unit": "percentunit", "min": 0, "max": 0.20, "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 0.03}, {"color": "red", "value": 0.05}]}, "mappings": []}, "overrides": []},
+      "options": {"showThresholdLabels": true, "showThresholdMarkers": true, "reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""}}
+    },
+    {
+      "id": 12,
+      "type": "bargauge",
+      "title": "Golden-set quality scorecard",
+      "gridPos": {"x": 18, "y": 16, "w": 6, "h": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"refId": "A", "expr": "aegis_offline_eval", "legendFormat": "{{metric}}"}],
+      "fieldConfig": {"defaults": {"unit": "percentunit", "min": 0, "max": 1, "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "orange", "value": 0.8}, {"color": "green", "value": 0.9}]}, "mappings": []}, "overrides": []},
+      "options": {"orientation": "horizontal", "displayMode": "gradient", "showUnfilled": true, "reduceOptions": {"values": false, "calcs": ["lastNotNull"], "fields": ""}}
+    },
+    {
+      "id": 13,
+      "type": "logs",
+      "title": "Redacted audit log stream",
+      "gridPos": {"x": 0, "y": 24, "w": 24, "h": 9},
+      "datasource": {"type": "loki", "uid": "loki"},
+      "targets": [{"refId": "A", "expr": "{job=\"aegis-agent\"}"}],
+      "options": {"dedupStrategy": "none", "enableLogDetails": true, "prettifyJSON": true, "showCommonLabels": false, "showLabels": true, "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true}
+    }
+  ]
+}
