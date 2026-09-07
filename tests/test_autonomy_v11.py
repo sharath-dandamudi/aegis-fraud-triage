@@ -44,3 +44,17 @@ def test_response_contract_is_evidence_backed_and_server_validated(tmp_path):
     assert result.response_contract.evidence_backed
     assert result.response_contract.citations
     assert any(gate.name == "structured_response_contract" and gate.passed for gate in result.gates)
+
+
+def test_refund_fee_scam_routes_to_authorised_payment_without_urgent_override(tmp_path):
+    result = AegisFraudTriageAgent(tmp_path).run(request("A caller said I am owed a refund but wants me to pay a fee first."))
+    assert result.route.value == "authorised_payment_scam"
+    assert not result.urgent_override_triggered
+    assert result.review_required
+    assert {tool.name for tool in result.tools if tool.success} == {"transaction_lookup", "payee_risk_lookup"}
+
+
+def test_ordinary_refund_question_is_not_promoted_to_payment_scam(tmp_path):
+    result = AegisFraudTriageAgent(tmp_path).run(request("How do I ask a legitimate retailer for a refund?"))
+    assert result.route.value == "scam_information"
+    assert not result.urgent_override_triggered
